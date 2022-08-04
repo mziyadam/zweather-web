@@ -37,10 +37,10 @@
     </div>
     <p v-if="!todoData">Loading...</p>
     <pre v-else>
-    <div class="card d-flex justify-content-center m-3" >
+    <div class="card d-flex justify-content-center m-auto" style="width: 18rem">
       <img style="width:130px" class="img-fluid ms-auto me-auto mt-5 mb-0" :src="''+weatherIcon(todoData.description)" class="card-img-top" alt="...">
       <div class="card-body">
-        <h3 class="card-title">{{recentName}}</h3><span class="card-text">{{todoData.description}}<hr>{{fullDescription}}<br>Wind : {{todoData.wind}}<br>Temperature : {{todoData.temperature}}</span>
+        <h3 class="card-title">{{recentName}}</h3><span class="card-text">{{todoData.description}}<hr>{{limitWords(fullDescription)}}<br>Wind : {{todoData.wind}}<br>Temperature : {{todoData.temperature}}</span>
       </div>
     </div>
   </pre>
@@ -55,7 +55,7 @@
         todoData: null,
         searchText: 'Jakarta',
         fullDescription: '',
-        recentName:'Jakarta'
+        recentName: 'Jakarta'
       }
     },
     methods: {
@@ -65,6 +65,17 @@
           `https://goweather.herokuapp.com/weather/` + this.searchText
         )
         this.todoData = await res.json()
+      },
+      limitWords(name) {
+        let newName = name
+        let wsIndex = 0
+        for (let i = 1; i < name.length; i += 1) {
+          if (name.charAt(i) == ' ') wsIndex = i;
+          if (i % 35 === 0) {
+            newName = `${newName.substr(0, wsIndex)}\n${newName.substr(wsIndex + 1)}`
+          }
+        }
+        return newName
       },
       weatherIcon(weatherName) {
         var url = ''
