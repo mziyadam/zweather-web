@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ziyad's Weather Page</title>
+  <link rel="icon" href="https://raw.githubusercontent.com/mziyadam/Beranda/master/profildiri.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+</head>
+<script src="https://unpkg.com/vue@3"></script>
+
+<div id="app">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="https://mziyadam.github.io/profile/"><b>@mziyadam</b></a>
+    </div>
+  </nav>
+  <div class="container text-center ">
+    <h1 class="mt-2">Zweather</h1>
+    <hr>
+    <p>Enter a city</p>
+    <div class="row">
+      <div class="col-10">
+        <input type="text" class="form-control" v-model="searchText">
+      </div>
+      <div class="col-2">
+        <button class="btn btn-info" @click="fetchData();recentName=searchText">Enter</button>
+      </div>
+    </div>
+    <p v-if="!todoData">Loading...</p>
+    <pre v-else>
+    <div class="card d-flex justify-content-center m-3" >
+      <img style="width:130px" class="img-fluid ms-auto me-auto mt-5 mb-0" :src="''+weatherIcon(todoData.description)" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="card-title">{{recentName}}</h3><span class="card-text">{{todoData.description}}<hr>{{fullDescription}}<br>Wind : {{todoData.wind}}<br>Temperature : {{todoData.temperature}}</span>
+      </div>
+    </div>
+  </pre>
+  </div>
+</div>
+<script>
+  const { createApp } = Vue
+
+  createApp({
+    data() {
+      return {
+        todoData: null,
+        searchText: 'Jakarta',
+        fullDescription: '',
+        recentName:'Jakarta'
+      }
+    },
+    methods: {
+      async fetchData() {
+        this.todoData = null
+        const res = await fetch(
+          `https://goweather.herokuapp.com/weather/` + this.searchText
+        )
+        this.todoData = await res.json()
+      },
+      weatherIcon(weatherName) {
+        var url = ''
+        weatherName = weatherName.toLowerCase()
+        switch (weatherName) {
+          case 'clear':
+            url = 'http://www.7timer.info/img/misc/about_civil_clear.png'
+            this.fullDescription = 'Total cloud cover less than 20%'
+            break;
+          case 'partly cloudy':
+            url = 'http://www.7timer.info/img/misc/about_civil_pcloudy.png'
+            this.fullDescription = 'Total cloud cover between 20%-60%'
+            break;
+          case 'cloudy':
+            url = 'http://www.7timer.info/img/misc/about_civil_mcloudy.png'
+            this.fullDescription = 'Total cloud cover between 60%-80%'
+            break;
+          case 'very cloudy':
+            url = 'http://www.7timer.info/img/misc/about_civil_cloudy.png'
+            this.fullDescription = 'Total cloud cover over over 80%'
+            break;
+          case 'foggy':
+            url = 'http://www.7timer.info/img/misc/about_civil_fog.png'
+            this.fullDescription = 'Relative humidity over 90% with total cloud cover less than 60%'
+            break;
+          case 'light rain or showers':
+            url = 'http://www.7timer.info/img/misc/about_civil_lightrain.png'
+            this.fullDescription = 'Precipitation rate less than 4mm/hr with cloud cover more than 80%'
+            break;
+          case 'occasional showers':
+            url = 'http://www.7timer.info/img/misc/about_civil_oshower.png'
+            this.fullDescription = 'Precipitation rate less than 4mm/hr with cloud cover between 60%-80%'
+            break;
+          case 'isolated showers':
+            url = 'http://www.7timer.info/img/misc/about_civil_ishower.png'
+            this.fullDescription = 'Precipitation rate less than 4mm/hr less than 60%'
+            break;
+          case 'light or occasional snow':
+            url = 'http://www.7timer.info/img/misc/about_civil_lightsnow.png'
+            this.fullDescription = 'Precipitation rate less than 4mm/hr'
+            break;
+          case 'rain':
+            url = 'http://www.7timer.info/img/misc/about_civil_rain.png'
+            this.fullDescription = 'Precipitation rate over 4mm/hr'
+            break;
+          case 'snow':
+            url = 'http://www.7timer.info/img/misc/about_civil_snow.png'
+            this.fullDescription = 'Precipitation rate over 4mm/hr'
+            break;
+          case 'mixed':
+            url = 'http://www.7timer.info/img/misc/about_civil_rainsnow.png'
+            this.fullDescription = 'Precipitation type to be ice pellets or freezing rain'
+            break;
+          case 'thunderstorm possible':
+            url = 'http://www.7timer.info/img/misc/about_civil_tstorm.png'
+            this.fullDescription = 'Lifted Index less than -5 with precipitation rate below 4mm/hr'
+            break;
+          case 'thunderstorm':
+            url = 'http://www.7timer.info/img/misc/about_civil_tsrain.png'
+            this.fullDescription = 'Lifted Index less than -5 with precipitation rate over 4mm/hr'
+            break;
+          case 'windy':
+            url = 'http://www.7timer.info/img/misc/about_civil_windy.png'
+            this.fullDescription = 'Sustained wind speed over 10.8m/s (force 6 or above)'
+            break;
+          default:
+            url = 'http://www.7timer.info/img/misc/about_civil_clear.png'
+            this.fullDescription = 'Sustained wind speed over 10.8m/s (force 6 or above)'
+            break;
+        }
+        return url
+      }
+    },
+    mounted() {
+      this.fetchData()
+    }
+  }).mount('#app')
+</script>
+
+
+</html>
